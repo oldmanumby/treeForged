@@ -11,8 +11,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const showFileIconsToggle = document.getElementById('showFileIcons');
     const useUpperCaseToggle = document.getElementById('useUpperCase');
     const includeCommentsToggle = document.getElementById('includeComments');
-    const spaceReplacementRadios = document.getElementsByName('spaceReplacement');
     const fileFormatRadios = document.getElementsByName('fileFormat');
+    const addFindReplaceBtn = document.getElementById('addFindReplace');
+    const clearAllRulesBtn = document.getElementById('clearAllRules');
+    const findReplaceRulesContainer = document.getElementById('findReplaceRules');
+    const presetButtons = document.querySelectorAll('.preset-btn');
 
     // Initialize settings from localStorage or defaults
     const settings = {
@@ -26,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showFileIcons: localStorage.getItem('showFileIcons') === 'true',
         useUpperCase: localStorage.getItem('useUpperCase') === 'true',
 
-        spaceReplacement: localStorage.getItem('spaceReplacement') || 'none',
+        findReplaceRules: JSON.parse(localStorage.getItem('findReplaceRules') || '[]'),
         fileFormat: localStorage.getItem('fileFormat') || 'txt'
     };
 
@@ -71,14 +74,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Handle both numbered (1., 2.) and lettered (a., b.) ordering
                 displayName = displayName.replace(/^(?:\d+|[a-zA-Z])\.\s+/, '');
             }
-            if (settings.spaceReplacement !== 'none') {
-                if (settings.spaceReplacement === 'remove') {
-                    displayName = displayName.replace(/\s+/g, '');
-                } else {
-                    const replacement = settings.spaceReplacement === 'underscore' ? '_' : '-';
-                    displayName = displayName.replace(/\s+/g, replacement);
-                }
-            }
+            // Apply find & replace rules
+            displayName = applyFindReplaceRules(displayName, settings.findReplaceRules);
             if (settings.useUpperCase) {
                 displayName = displayName.toUpperCase();
             }
@@ -246,18 +243,8 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('useUpperCase', e.target.checked);
         generateTree();
     });
-    spaceReplacementRadios.forEach(radio => {
-        // Set initial state
-        if (radio.value === settings.spaceReplacement) {
-            radio.checked = true;
-        }
-
-        radio.addEventListener('change', (e) => {
-            settings.spaceReplacement = e.target.value;
-            localStorage.setItem('spaceReplacement', e.target.value);
-            generateTree();
-        });
-    });
+    // Initialize find & replace UI
+    initializeFindReplace();
 
     fileFormatRadios.forEach(radio => {
         // Set initial state
@@ -354,15 +341,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const level = (line.match(/^\s*/)[0].length) / 2;
             let [name, comment] = line.trim().split('#').map(s => s.trim());
             
-            // Apply space replacement if needed
-            if (settings.spaceReplacement !== 'none') {
-                if (settings.spaceReplacement === 'remove') {
-                    name = name.replace(/\s+/g, '');
-                } else {
-                    const replacement = settings.spaceReplacement === 'underscore' ? '_' : '-';
-                    name = name.replace(/\s+/g, replacement);
-                }
-            }
+            // Apply find & replace rules
+            name = applyFindReplaceRules(name, settings.findReplaceRules);
 
             // Apply case transformation if needed
             if (settings.useUpperCase) {
@@ -607,5 +587,145 @@ document.addEventListener('DOMContentLoaded', () => {
     // Generate tree on initial load if there's content
     if (input.value) {
         generateTree();
+    }
+
+    // Find & Replace Functions
+    function applyFindReplaceRules(text, rules) {
+        let result = text;
+        rules.forEach((rule, index) => {
+            if (rule.find && rule.find.trim() !== '') {
+                // Use global replace for all occurrences
+                const findText = rule.find;
+                const replaceText = rule.replace || '';
+
+                // Escape special regex characters in the find text
+                const escapedFind = findText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                const regex = new RegExp(escapedFind, 'g');
+                const beforeReplace = result;
+                result = result.replace(regex, replaceText);
+
+                // Debug logging (remove in production)
+                if (beforeReplace !== result) {
+                    console.log(`Rule ${index + 1}: "${findText}" → "${replaceText}" | "${beforeReplace}" → "${result}"`);
+                }
+            }
+        });
+        return result;
+    }
+
+    function initializeFindReplace() {
+        // Load existing rules
+        renderFindReplaceRules();
+
+        // Add rule button
+        addFindReplaceBtn.addEventListener('click', () => {
+            addFindReplaceRule('', '');
+        });
+
+        // Clear all rules button
+        clearAllRulesBtn.addEventListener('click', () => {
+            settings.findReplaceRules = [];
+            saveFindReplaceRules();
+            renderFindReplaceRules();
+            generateTree();
+        });
+
+        // Preset buttons
+        presetButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const find = btn.dataset.find;
+                const replace = btn.dataset.replace;
+                addFindReplaceRule(find, replace);
+            });
+        });
+    }
+
+    function addFindReplaceRule(find = '', replace = '') {
+        const rule = { find, replace };
+        settings.findReplaceRules.push(rule);
+        saveFindReplaceRules();
+        renderFindReplaceRules();
+        generateTree();
+    }
+
+    function removeFindReplaceRule(index) {
+        settings.findReplaceRules.splice(index, 1);
+        saveFindReplaceRules();
+        renderFindReplaceRules();
+        generateTree();
+    }
+
+    function updateFindReplaceRule(index, field, value) {
+        if (settings.findReplaceRules[index]) {
+            settings.findReplaceRules[index][field] = value;
+            saveFindReplaceRules();
+            // Use a small delay to avoid too many rapid updates
+            clearTimeout(window.findReplaceUpdateTimeout);
+            window.findReplaceUpdateTimeout = setTimeout(() => {
+                generateTree();
+            }, 300);
+        }
+    }
+
+    function saveFindReplaceRules() {
+        console.log('Saving rules:', settings.findReplaceRules);
+        localStorage.setItem('findReplaceRules', JSON.stringify(settings.findReplaceRules));
+    }
+
+    function renderFindReplaceRules() {
+        console.log('Rendering rules:', settings.findReplaceRules);
+        findReplaceRulesContainer.innerHTML = '';
+
+        settings.findReplaceRules.forEach((rule, index) => {
+            const ruleElement = document.createElement('div');
+            ruleElement.className = 'find-replace-rule';
+
+            ruleElement.innerHTML = `
+                <input type="text"
+                       placeholder="Find..."
+                       value="${rule.find || ''}"
+                       data-index="${index}"
+                       data-field="find">
+                <span class="rule-arrow">→</span>
+                <input type="text"
+                       placeholder="Replace with..."
+                       value="${rule.replace || ''}"
+                       data-index="${index}"
+                       data-field="replace">
+                <button type="button"
+                        class="remove-rule-btn"
+                        data-index="${index}">×</button>
+            `;
+
+            findReplaceRulesContainer.appendChild(ruleElement);
+        });
+
+        // Add event listeners to the new elements using event delegation
+        // Remove any existing listeners first
+        findReplaceRulesContainer.removeEventListener('input', handleRuleInput);
+        findReplaceRulesContainer.removeEventListener('click', handleRuleClick);
+
+        // Add new listeners
+        findReplaceRulesContainer.addEventListener('input', handleRuleInput);
+        findReplaceRulesContainer.addEventListener('click', handleRuleClick);
+    }
+
+    function handleRuleInput(e) {
+        if (e.target.tagName === 'INPUT') {
+            const index = parseInt(e.target.dataset.index);
+            const field = e.target.dataset.field;
+            if (!isNaN(index) && field) {
+                updateFindReplaceRule(index, field, e.target.value);
+            }
+        }
+    }
+
+    function handleRuleClick(e) {
+        if (e.target.classList.contains('remove-rule-btn')) {
+            const index = parseInt(e.target.dataset.index);
+            if (!isNaN(index)) {
+                removeFindReplaceRule(index);
+            }
+        }
     }
 });

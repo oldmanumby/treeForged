@@ -272,6 +272,148 @@ html.dark-mode .format-radio-group input[type="radio"]:checked + span {
     color: #64B5F6;
 }
 
+/* Find & Replace Styles */
+.find-replace-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.find-replace-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.find-replace-controls > div:first-child {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.add-rule-btn, .clear-rules-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    background-color: #f8f9fa;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.add-rule-btn:hover, .clear-rules-btn:hover {
+    background-color: #e9ecef;
+    transform: translateY(-1px);
+}
+
+html.dark-mode .add-rule-btn,
+html.dark-mode .clear-rules-btn {
+    background-color: #404040;
+    border-color: #555;
+    color: #e0e0e0;
+}
+
+html.dark-mode .add-rule-btn:hover,
+html.dark-mode .clear-rules-btn:hover {
+    background-color: #4a4a4a;
+}
+
+.preset-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.preset-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.preset-btn:hover {
+    background-color: #f0f0f0;
+    border-color: #999;
+}
+
+html.dark-mode .preset-btn {
+    background-color: #333;
+    border-color: #555;
+    color: #ccc;
+}
+
+html.dark-mode .preset-btn:hover {
+    background-color: #3a3a3a;
+    border-color: #666;
+}
+
+.find-replace-rules {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.find-replace-rule {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    padding: 0.5rem;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+html.dark-mode .find-replace-rule {
+    background-color: #2a2a2a;
+    border-color: #444;
+}
+
+.find-replace-rule input {
+    flex: 1;
+    padding: 0.4rem;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: 0.9rem;
+}
+
+html.dark-mode .find-replace-rule input {
+    background-color: #333;
+    border-color: #555;
+    color: #e0e0e0;
+}
+
+.find-replace-rule .rule-arrow {
+    color: #666;
+    font-weight: bold;
+    min-width: 20px;
+    text-align: center;
+}
+
+html.dark-mode .find-replace-rule .rule-arrow {
+    color: #aaa;
+}
+
+.remove-rule-btn {
+    padding: 0.3rem 0.6rem;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: background-color 0.2s ease;
+}
+
+.remove-rule-btn:hover {
+    background-color: #c82333;
+}
+
 /* Radio Button Group */
 .setting-group {
     flex-direction: column;

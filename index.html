@@ -147,24 +147,20 @@ my-project/    # Root project folder
                 <div class="settings-column">
                     <h4>Format</h4>
                     <div class="format-group">
-                        <div class="format-label">Replace Spaces:</div>
-                        <div class="format-radio-group">
-                            <label>
-                                <input type="radio" name="spaceReplacement" value="none" checked>
-                                <span>None</span>
-                            </label>
-                            <label>
-                                <input type="radio" name="spaceReplacement" value="underscore">
-                                <span>Underscore</span>
-                            </label>
-                            <label>
-                                <input type="radio" name="spaceReplacement" value="dash">
-                                <span>Dash</span>
-                            </label>
-                            <label>
-                                <input type="radio" name="spaceReplacement" value="remove">
-                                <span>Remove</span>
-                            </label>
+                        <div class="format-label">Find & Replace:</div>
+                        <div class="find-replace-container">
+                            <div class="find-replace-controls">
+                                <button type="button" id="addFindReplace" class="add-rule-btn">+ Add Rule</button>
+                                <button type="button" id="clearAllRules" class="clear-rules-btn">Clear All</button>
+                                <div class="preset-buttons">
+                                    <button type="button" class="preset-btn" data-find=" " data-replace="_">Spaces → _</button>
+                                    <button type="button" class="preset-btn" data-find=" " data-replace="-">Spaces → -</button>
+                                    <button type="button" class="preset-btn" data-find=" " data-replace="">Remove Spaces</button>
+                                </div>
+                            </div>
+                            <div id="findReplaceRules" class="find-replace-rules">
+                                <!-- Rules will be added dynamically -->
+                            </div>
                         </div>
                     </div>
                     <div class="format-group">
