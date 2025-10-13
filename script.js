@@ -14,26 +14,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const spaceReplacementRadios = document.getElementsByName('spaceReplacement');
     const fileFormatRadios = document.getElementsByName('fileFormat');
 
-    // Initialize dark mode from localStorage
-    if (localStorage.getItem('darkMode') === 'true') {
-        document.body.classList.add('dark-mode');
-        darkModeToggle.checked = true;
-    }
-
     // Initialize settings from localStorage or defaults
     const settings = {
-        // Theme section - ON by default
-        darkMode: localStorage.getItem('darkMode') !== 'false',
-        preserveNumbering: localStorage.getItem('preserveNumbering') !== 'false',
-        showFolderSlash: localStorage.getItem('showFolderSlash') !== 'false',
-        connectedRoots: localStorage.getItem('connectedRoots') !== 'false',
-        includeComments: localStorage.getItem('includeComments') !== 'false',
-        
-        // Display section - OFF by default
+        // All switches default to OFF
+        darkMode: localStorage.getItem('darkMode') === 'true',
+        preserveNumbering: localStorage.getItem('preserveNumbering') === 'true',
+        showFolderSlash: localStorage.getItem('showFolderSlash') === 'true',
+        connectedRoots: localStorage.getItem('connectedRoots') === 'true',
+        includeComments: localStorage.getItem('includeComments') === 'true',
         showFolderIcons: localStorage.getItem('showFolderIcons') === 'true',
         showFileIcons: localStorage.getItem('showFileIcons') === 'true',
         useUpperCase: localStorage.getItem('useUpperCase') === 'true',
-        
+
         spaceReplacement: localStorage.getItem('spaceReplacement') || 'none',
         fileFormat: localStorage.getItem('fileFormat') || 'txt'
     };
@@ -50,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Apply dark mode if enabled
     if (settings.darkMode) {
-        document.body.classList.add('dark-mode');
+        document.documentElement.classList.add('dark-mode');
     }
 
     // Icons (using simple ASCII characters)
@@ -71,8 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
         normalizedLines.forEach((line, index) => {
             const level = (line.match(/^\s*/)[0].length) / 2;
             let [name, comment] = line.trim().split('#').map(s => s.trim());
-            const isFolder = index < normalizedLines.length - 1 &&
-                (normalizedLines[index + 1].match(/^\s*/)[0].length) / 2 > level;
+            const isFolderItem = isFolder(normalizedLines, index);
             
             // Transform name based on settings
             let displayName = name;
@@ -94,10 +85,10 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Calculate prefix length
             const prefixLength = 4 * level; // Each level adds 4 characters (│   or    )
-            const iconLength = isFolder ? 
-                (settings.showFolderIcons ? ICONS.folder.length : 0) : 
+            const iconLength = isFolderItem ?
+                (settings.showFolderIcons ? ICONS.folder.length : 0) :
                 (settings.showFileIcons ? ICONS.file.length : 0);
-            const nameLength = iconLength + displayName.length + (isFolder && !comment && settings.showFolderSlash ? 1 : 0);
+            const nameLength = iconLength + displayName.length + (isFolderItem && !comment && settings.showFolderSlash ? 1 : 0);
             const totalLength = prefixLength + nameLength;
             maxLength = Math.max(maxLength, totalLength);
             
@@ -106,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 name,
                 displayName,
                 comment,
-                isFolder
+                isFolder: isFolderItem
             });
         });
         
@@ -214,59 +205,56 @@ document.addEventListener('DOMContentLoaded', () => {
     darkModeToggle.addEventListener('change', (e) => {
         settings.darkMode = e.target.checked;
         if (e.target.checked) {
-            document.body.classList.add('dark-mode');
+            document.documentElement.classList.add('dark-mode');
         } else {
-            document.body.classList.remove('dark-mode');
+            document.documentElement.classList.remove('dark-mode');
         }
         localStorage.setItem('darkMode', e.target.checked);
     });
 
     preserveNumberingToggle.addEventListener('change', (e) => {
-        console.log('Toggle changed:', e.target.checked);
         settings.preserveNumbering = e.target.checked;
         localStorage.setItem('preserveNumbering', e.target.checked);
-        
-        // Log current state
-        console.log('Current input:', input.value);
-        console.log('Is markdown?', detectMarkdown(input.value));
-        console.log('Current settings:', settings);
-        
-        // Check if current input is markdown
-        const inputText = input.value;
-        if (detectMarkdown(inputText)) {
-            console.log('Converting markdown...');
-            const convertedText = convertMarkdownToTree(inputText);
-            console.log('Converted text:', convertedText);
-            input.value = convertedText;
-        }
-        
-        console.log('Generating tree...');
+
+        // Simply regenerate the tree with the new setting
+        // Don't try to convert the input - just change how it's displayed
         generateTree();
     });
 
     showFolderSlashToggle.addEventListener('change', (e) => {
         settings.showFolderSlash = e.target.checked;
+        localStorage.setItem('showFolderSlash', e.target.checked);
         generateTree();
     });
     connectedRootsToggle.addEventListener('change', (e) => {
         settings.connectedRoots = e.target.checked;
+        localStorage.setItem('connectedRoots', e.target.checked);
         generateTree();
     });
     showFolderIconsToggle.addEventListener('change', (e) => {
         settings.showFolderIcons = e.target.checked;
+        localStorage.setItem('showFolderIcons', e.target.checked);
         generateTree();
     });
     showFileIconsToggle.addEventListener('change', (e) => {
         settings.showFileIcons = e.target.checked;
+        localStorage.setItem('showFileIcons', e.target.checked);
         generateTree();
     });
     useUpperCaseToggle.addEventListener('change', (e) => {
         settings.useUpperCase = e.target.checked;
+        localStorage.setItem('useUpperCase', e.target.checked);
         generateTree();
     });
     spaceReplacementRadios.forEach(radio => {
+        // Set initial state
+        if (radio.value === settings.spaceReplacement) {
+            radio.checked = true;
+        }
+
         radio.addEventListener('change', (e) => {
             settings.spaceReplacement = e.target.value;
+            localStorage.setItem('spaceReplacement', e.target.value);
             generateTree();
         });
     });
@@ -295,6 +283,23 @@ document.addEventListener('DOMContentLoaded', () => {
             if (level === targetLevel) return i;
         }
         return -1;
+    }
+
+    function isFolder(lines, index) {
+        if (index >= lines.length - 1) return false;
+
+        const currentLevel = (lines[index].match(/^\s*/)[0].length) / 2;
+
+        // Look for the next non-empty line
+        for (let i = index + 1; i < lines.length; i++) {
+            const nextLine = lines[i];
+            if (!nextLine.trim()) continue; // Skip empty lines
+
+            const nextLevel = (nextLine.match(/^\s*/)[0].length) / 2;
+            return nextLevel > currentLevel;
+        }
+
+        return false;
     }
 
     function normalizeIndentation(lines) {
@@ -373,15 +378,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const fullPath = parentPath ? `${parentPath}/${name}` : name;
 
             // Check if this is a folder by looking at the next line's indentation
-            const isFolder = i < lines.length - 1 && 
-                           lines[i + 1].trim() && 
-                           (lines[i + 1].match(/^\s*/)[0].length) / 2 > level;
+            const isFolderItem = isFolder(lines, i);
 
-            if (isFolder) {
+            if (isFolderItem) {
                 // Create folder
                 const newFolder = zip.folder(fullPath);
                 stack.push({ path: fullPath, folder: newFolder });
-                
+
                 // If folder has a comment and comments are enabled, create a comment file inside it
                 if (comment && settings.includeComments) {
                     const commentFileName = name + '_comments.txt';
@@ -455,18 +458,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     exportBtn.addEventListener('click', exportFiles);
 
-    function copyToClipboard() {
-        const textArea = document.createElement('textarea');
-        textArea.value = output.textContent;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textArea);
-        
-        copyBtn.textContent = 'Copied!';
-        setTimeout(() => {
-            copyBtn.textContent = 'Copy to Clipboard';
-        }, 2000);
+    async function copyToClipboard() {
+        try {
+            // Use modern Clipboard API if available
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(output.textContent);
+            } else {
+                // Fallback for older browsers or non-secure contexts
+                const textArea = document.createElement('textarea');
+                textArea.value = output.textContent;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                textArea.style.top = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+            }
+
+            copyBtn.textContent = 'Copied!';
+            setTimeout(() => {
+                copyBtn.textContent = 'Copy to Clipboard';
+            }, 2000);
+        } catch (error) {
+            console.error('Failed to copy text: ', error);
+            copyBtn.textContent = 'Copy Failed';
+            setTimeout(() => {
+                copyBtn.textContent = 'Copy to Clipboard';
+            }, 2000);
+        }
     }
 
     function detectMarkdown(text) {
@@ -505,12 +526,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 let finalContent;
                 if (numberedHeaderMatch) {
-                    console.log('Found numbered header:', headerContent);
-                    console.log('Preserve numbering setting:', settings.preserveNumbering);
-                    finalContent = settings.preserveNumbering ? 
-                        numberedHeaderMatch[1] + numberedHeaderMatch[2] : 
+                    finalContent = settings.preserveNumbering ?
+                        numberedHeaderMatch[1] + numberedHeaderMatch[2] :
                         numberedHeaderMatch[2];
-                    console.log('Final content:', finalContent);
                 } else {
                     finalContent = headerContent;
                 }
@@ -525,12 +543,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (bulletMatch || numberMatch) {
                 let content;
                 if (numberMatch) {
-                    console.log('Found numbered item:', line);
-                    console.log('Preserve numbering setting:', settings.preserveNumbering);
-                    content = settings.preserveNumbering ? 
-                        numberMatch[1] + numberMatch[2] : 
+                    content = settings.preserveNumbering ?
+                        numberMatch[1] + numberMatch[2] :
                         numberMatch[2];
-                    console.log('Final content:', content);
                 } else {
                     content = bulletMatch[1];
                 }

@@ -39,6 +39,15 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     
     <link rel="stylesheet" href="style.css">
+
+    <!-- Prevent dark mode flash -->
+    <script>
+        (function() {
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.documentElement.classList.add('dark-mode');
+            }
+        })();
+    </script>
 </head>
 <body>
     <div class="container">
@@ -52,7 +61,7 @@
 - Add a trailing slash to change a file to a folder
 - Add comments after # (spacing doesn't matter).
 
-Eample:
+Example:
 my-project/    # Root project folder
   src/ #Source code
     index.js         # Main entry point
@@ -89,21 +98,21 @@ my-project/    # Root project folder
                     </div>
                     <div class="setting">
                         <label class="switch">
-                            <input type="checkbox" id="preserveNumbering" checked>
+                            <input type="checkbox" id="preserveNumbering">
                             <span class="slider round"></span>
                         </label>
                         <span class="setting-label">Preserve Ordering</span>
                     </div>
                     <div class="setting">
                         <label class="switch">
-                            <input type="checkbox" id="showFolderSlash" checked>
+                            <input type="checkbox" id="showFolderSlash">
                             <span class="slider round"></span>
                         </label>
                         <span class="setting-label">Trailing Slash</span>
                     </div>
                     <div class="setting">
                         <label class="switch">
-                            <input type="checkbox" id="connectedRoots" checked>
+                            <input type="checkbox" id="connectedRoots">
                             <span class="slider"></span>
                         </label>
                         <span class="setting-label">Connected Roots</span>
@@ -181,7 +190,7 @@ my-project/    # Root project folder
                     </div>
                     <div class="setting">
                         <label class="switch">
-                            <input type="checkbox" id="includeComments" checked>
+                            <input type="checkbox" id="includeComments">
                             <span class="slider"></span>
                         </label>
                         <span class="setting-label">Include Comments</span>

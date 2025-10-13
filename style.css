@@ -1,3 +1,18 @@
+/* CSS Variables */
+:root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f5f5f5;
+    --text-primary: #333333;
+    --border-color: #dddddd;
+}
+
+html.dark-mode {
+    --bg-primary: #333333;
+    --bg-secondary: #2d2d2d;
+    --text-primary: #e0e0e0;
+    --border-color: #404040;
+}
+
 /* Light theme (default) */
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
@@ -10,7 +25,7 @@ body {
 }
 
 /* Dark theme */
-body.dark-mode {
+html.dark-mode body {
     background-color: #1a1a1a;
     color: #e0e0e0;
 }
@@ -38,7 +53,7 @@ h1 a:hover {
     text-decoration: underline;
 }
 
-.dark-mode h1 {
+html.dark-mode h1 {
     color: #e0e0e0;
 }
 
@@ -56,7 +71,7 @@ h1 {
     margin-bottom: 20px;
 }
 
-.dark-mode .subtitle {
+html.dark-mode .subtitle {
     color: #aaa;
 }
 
@@ -66,8 +81,8 @@ h3, h4 {
     margin: 0 0 1rem 0;
 }
 
-.dark-mode h3,
-.dark-mode h4 {
+html.dark-mode h3,
+html.dark-mode h4 {
     color: #e0e0e0;
 }
 
@@ -97,7 +112,7 @@ textarea#input {
     transition: all 0.3s ease;
 }
 
-.dark-mode textarea#input {
+html.dark-mode textarea#input {
     background-color: #333333;
     color: #e0e0e0;
     border-color: #404040;
@@ -134,7 +149,7 @@ button:hover {
     transition: all 0.3s ease;
 }
 
-.dark-mode #output {
+html.dark-mode #output {
     background-color: #333333;
     color: #e0e0e0;
     border-color: #404040;
@@ -149,7 +164,7 @@ button:hover {
     transition: all 0.3s ease;
 }
 
-.dark-mode .settings-panel {
+html.dark-mode .settings-panel {
     background-color: #2d2d2d;
     border-color: #404040;
 }
@@ -190,7 +205,7 @@ button:hover {
     transition: color 0.3s ease;
 }
 
-.dark-mode .setting-label {
+html.dark-mode .setting-label {
     color: #e0e0e0;
 }
 
@@ -206,7 +221,7 @@ button:hover {
     transition: color 0.3s ease;
 }
 
-.dark-mode .format-label {
+html.dark-mode .format-label {
     color: #e0e0e0;
 }
 
@@ -229,7 +244,7 @@ button:hover {
     cursor: pointer;
 }
 
-.dark-mode .format-radio-group label {
+html.dark-mode .format-radio-group label {
     background-color: #333333;
     border-color: #404040;
 }
@@ -239,7 +254,7 @@ button:hover {
     transform: translateY(-1px);
 }
 
-.dark-mode .format-radio-group label:hover {
+html.dark-mode .format-radio-group label:hover {
     background-color: #404040;
 }
 
@@ -253,7 +268,7 @@ button:hover {
     color: #2196F3;
 }
 
-.dark-mode .format-radio-group input[type="radio"]:checked + span {
+html.dark-mode .format-radio-group input[type="radio"]:checked + span {
     color: #64B5F6;
 }
 
@@ -279,7 +294,7 @@ button:hover {
     transition: color 0.3s ease;
 }
 
-.dark-mode .radio-group label {
+html.dark-mode .radio-group label {
     color: #e0e0e0;
 }
 
@@ -320,11 +335,11 @@ button:hover {
     margin-right: 12px;
 }
 
-.dark-mode .gitea-button {
+html.dark-mode .gitea-button {
     background-color: #444444;
 }
 
-.dark-mode .gitea-button:hover {
+html.dark-mode .gitea-button:hover {
     background-color: #333333;
 }
 
@@ -355,7 +370,7 @@ button:hover {
     border-radius: 24px;
 }
 
-.dark-mode .slider {
+htmlhtml.dark-mode .slider {
     background-color: #333333;
 }
 
@@ -437,12 +452,12 @@ input:checked + .slider:before {
     font-family: monospace;
 }
 
-.dark-mode .help-section {
+html.dark-mode .help-section {
     background-color: var(--bg-secondary);
 }
 
-.dark-mode .help-content pre,
-.dark-mode .help-content code {
+html.dark-mode .help-content pre,
+html.dark-mode .help-content code {
     background-color: var(--bg-primary);
 }
 
@@ -473,11 +488,11 @@ input:checked + .slider:before {
     fill: currentColor;
 }
 
-.dark-mode .github-button {
+html.dark-mode .github-button {
     background-color: #2f363d;
 }
 
-.dark-mode .github-button:hover {
+html.dark-mode .github-button:hover {
     background-color: #444d56;
 }
 
