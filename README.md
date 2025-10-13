@@ -47,7 +47,7 @@ Root/           # Main project folder
 
 - **Dark Mode:** Switch between light and dark themes for better visibility.
 - **Preserve Ordering:** Should your folders and/or files have numbering or lettering as part of their outline, this toggle will preserve that list structure (e.g., "1. File.txt" or "a. File.txt").
-- **Trailing Slash:** Toggle the trailing slash `/` after folder names.
+- **Trailing Folder Slash:** Toggle the trailing slash `/` after folder names.
 - **Connected Roots:** Toggle the vertical pathway connecting the root folders.
 
 ## Display Settings
