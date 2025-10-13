@@ -52,7 +52,7 @@
 <body>
     <div class="container">
         <h1><a href="https://treephorge.oldmanumby.com">treePhorge</a></h1>
-        <h2 class="subtitle">An ASCII Tree Diagram and Structure Generator + Exporter</h2>
+        <h2 class="subtitle">A .MD/ASCII Tree Diagram and Structure Generator + Exporter by OldManUmby</h2>
         
         <div class="main-content">
             <div class="input-output">
@@ -108,7 +108,7 @@ my-project/    # Root project folder
                             <input type="checkbox" id="showFolderSlash">
                             <span class="slider round"></span>
                         </label>
-                        <span class="setting-label">Trailing Slash</span>
+                        <span class="setting-label">Trailing Folder Slash</span>
                     </div>
                     <div class="setting">
                         <label class="switch">
@@ -153,9 +153,34 @@ my-project/    # Root project folder
                                 <button type="button" id="addFindReplace" class="add-rule-btn">+ Add Rule</button>
                                 <button type="button" id="clearAllRules" class="clear-rules-btn">Clear All</button>
                                 <div class="preset-buttons">
-                                    <button type="button" class="preset-btn" data-find=" " data-replace="_">Spaces → _</button>
-                                    <button type="button" class="preset-btn" data-find=" " data-replace="-">Spaces → -</button>
-                                    <button type="button" class="preset-btn" data-find=" " data-replace="">Remove Spaces</button>
+                                    <div class="preset-row">
+                                        <span class="preset-label">Spaces:</span>
+                                        <button type="button" class="preset-btn" data-find=" " data-replace="_">→ _</button>
+                                        <button type="button" class="preset-btn" data-find=" " data-replace="-">→ -</button>
+                                        <button type="button" class="preset-btn" data-find=" " data-replace="+">→ +</button>
+                                        <button type="button" class="preset-btn" data-find=" " data-replace="">Remove</button>
+                                    </div>
+                                    <div class="preset-row">
+                                        <span class="preset-label">Underscores:</span>
+                                        <button type="button" class="preset-btn" data-find="_" data-replace="-">→ -</button>
+                                        <button type="button" class="preset-btn" data-find="_" data-replace="+">→ +</button>
+                                        <button type="button" class="preset-btn" data-find="_" data-replace=" ">→ Space</button>
+                                        <button type="button" class="preset-btn" data-find="_" data-replace="">Remove</button>
+                                    </div>
+                                    <div class="preset-row">
+                                        <span class="preset-label">Dashes:</span>
+                                        <button type="button" class="preset-btn" data-find="-" data-replace="_">→ _</button>
+                                        <button type="button" class="preset-btn" data-find="-" data-replace="+">→ +</button>
+                                        <button type="button" class="preset-btn" data-find="-" data-replace=" ">→ Space</button>
+                                        <button type="button" class="preset-btn" data-find="-" data-replace="">Remove</button>
+                                    </div>
+                                    <div class="preset-row">
+                                        <span class="preset-label">Pluses:</span>
+                                        <button type="button" class="preset-btn" data-find="+" data-replace="_">→ _</button>
+                                        <button type="button" class="preset-btn" data-find="+" data-replace="-">→ -</button>
+                                        <button type="button" class="preset-btn" data-find="+" data-replace=" ">→ Space</button>
+                                        <button type="button" class="preset-btn" data-find="+" data-replace="">Remove</button>
+                                    </div>
                                 </div>
                             </div>
                             <div id="findReplaceRules" class="find-replace-rules">
@@ -190,6 +215,20 @@ my-project/    # Root project folder
                             <span class="slider"></span>
                         </label>
                         <span class="setting-label">Include Comments</span>
+                    </div>
+                    <div class="setting">
+                        <label class="switch">
+                            <input type="checkbox" id="includeOriginalInput">
+                            <span class="slider"></span>
+                        </label>
+                        <span class="setting-label">Include Original Input</span>
+                    </div>
+                    <div class="setting">
+                        <label class="switch">
+                            <input type="checkbox" id="includeConvertedOutput">
+                            <span class="slider"></span>
+                        </label>
+                        <span class="setting-label">Include Converted Output</span>
                     </div>
                 </div>
             </div>

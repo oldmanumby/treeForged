@@ -11,6 +11,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const showFileIconsToggle = document.getElementById('showFileIcons');
     const useUpperCaseToggle = document.getElementById('useUpperCase');
     const includeCommentsToggle = document.getElementById('includeComments');
+    const includeOriginalInputToggle = document.getElementById('includeOriginalInput');
+    const includeConvertedOutputToggle = document.getElementById('includeConvertedOutput');
     const fileFormatRadios = document.getElementsByName('fileFormat');
     const addFindReplaceBtn = document.getElementById('addFindReplace');
     const clearAllRulesBtn = document.getElementById('clearAllRules');
@@ -28,6 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
         showFolderIcons: localStorage.getItem('showFolderIcons') === 'true',
         showFileIcons: localStorage.getItem('showFileIcons') === 'true',
         useUpperCase: localStorage.getItem('useUpperCase') === 'true',
+        includeOriginalInput: localStorage.getItem('includeOriginalInput') === 'true',
+        includeConvertedOutput: localStorage.getItem('includeConvertedOutput') === 'true',
 
         findReplaceRules: JSON.parse(localStorage.getItem('findReplaceRules') || '[]'),
         fileFormat: localStorage.getItem('fileFormat') || 'txt'
@@ -42,6 +46,8 @@ document.addEventListener('DOMContentLoaded', () => {
     showFolderSlashToggle.checked = settings.showFolderSlash;
     useUpperCaseToggle.checked = settings.useUpperCase;
     includeCommentsToggle.checked = settings.includeComments;
+    includeOriginalInputToggle.checked = settings.includeOriginalInput;
+    includeConvertedOutputToggle.checked = settings.includeConvertedOutput;
 
     // Apply dark mode if enabled
     if (settings.darkMode) {
@@ -191,7 +197,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Generate the tree when input changes
     function generateTree() {
-        const lines = input.value.split('\n');
+        let inputText = input.value;
+
+        // If input contains markdown, convert it for processing but don't modify the input field
+        if (detectMarkdown(inputText)) {
+            inputText = convertMarkdownToTree(inputText);
+        }
+
+        const lines = inputText.split('\n');
         output.textContent = processLines(lines, settings);
     }
 
@@ -263,6 +276,16 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('includeComments', e.target.checked);
     });
 
+    includeOriginalInputToggle.addEventListener('change', (e) => {
+        settings.includeOriginalInput = e.target.checked;
+        localStorage.setItem('includeOriginalInput', e.target.checked);
+    });
+
+    includeConvertedOutputToggle.addEventListener('change', (e) => {
+        settings.includeConvertedOutput = e.target.checked;
+        localStorage.setItem('includeConvertedOutput', e.target.checked);
+    });
+
     function findNextAtLevel(lines, startIndex, targetLevel) {
         for (let i = startIndex + 1; i < lines.length; i++) {
             const level = (lines[i].match(/^\s*/)[0].length) / 2;
@@ -331,7 +354,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function exportFiles() {
         const zip = new JSZip();
-        const lines = normalizeIndentation(input.value.split('\n'));
+
+        // Use the same conversion logic as generateTree()
+        let inputText = input.value;
+
+        // If input contains markdown, convert it for processing
+        if (detectMarkdown(inputText)) {
+            inputText = convertMarkdownToTree(inputText);
+        }
+
+        const lines = normalizeIndentation(inputText.split('\n'));
         const stack = [{ path: '', folder: zip }];
         
         for (let i = 0; i < lines.length; i++) {
@@ -340,7 +372,13 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const level = (line.match(/^\s*/)[0].length) / 2;
             let [name, comment] = line.trim().split('#').map(s => s.trim());
-            
+
+            // Apply preserve numbering setting (same as in processLines)
+            if (!settings.preserveNumbering) {
+                // Handle both numbered (1., 2.) and lettered (a., b.) ordering
+                name = name.replace(/^(?:\d+|[a-zA-Z])\.\s+/, '');
+            }
+
             // Apply find & replace rules
             name = applyFindReplaceRules(name, settings.findReplaceRules);
 
@@ -375,12 +413,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 let fileName = name;
                 const hasExtension = /\.[^/.]+$/.test(name);
                 const selectedFormat = settings.fileFormat || 'txt';
-                
-                if (hasExtension) {
-                    // Keep original extension only if 'keep' is selected
-                    fileName = selectedFormat === 'keep' ? name : `${name.split('.')[0]}.${selectedFormat}`;
+
+                if (selectedFormat === 'keep') {
+                    // Keep original format - don't modify the name at all
+                    fileName = name;
+                } else if (hasExtension) {
+                    // Replace extension with selected format
+                    fileName = `${name.split('.')[0]}.${selectedFormat}`;
                 } else {
-                    // No extension - use the selected format
+                    // No extension - add the selected format
                     fileName = `${name}.${selectedFormat}`;
                 }
                 
@@ -412,6 +453,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     parentFolder.file(commentFileName, comment, { binary: false });
                 }
             }
+        }
+
+        // Add original input file if enabled
+        if (settings.includeOriginalInput && input.value.trim()) {
+            zip.file('_original-input.txt', input.value);
+        }
+
+        // Add converted output file if enabled
+        if (settings.includeConvertedOutput && output.textContent.trim()) {
+            zip.file('_converted-output.txt', output.textContent);
         }
 
         try {
@@ -491,19 +542,23 @@ document.addEventListener('DOMContentLoaded', () => {
         let lastHeaderIndent = 0;
 
         lines.forEach((line, index) => {
-            line = line.trim();
-            if (!line) return;
+            const originalLine = line;
+            const trimmedLine = line.trim();
+            if (!trimmedLine) return;
+
+            // Calculate the original indentation level of the line
+            const originalIndent = originalLine.length - originalLine.trimStart().length;
 
             // Handle headers (# Root, ## Folder, etc.)
-            const headerMatch = line.match(/^(#{1,6})\s+(.+)$/);
+            const headerMatch = trimmedLine.match(/^(#{1,6})\s+(.+)$/);
             if (headerMatch) {
                 currentHeaderLevel = headerMatch[1].length - 1;
                 lastHeaderIndent = currentHeaderLevel * 2;
-                
+
                 // Check if header starts with a number
                 const headerContent = headerMatch[2];
                 const numberedHeaderMatch = headerContent.match(/^(\d+\.\s*)(.+)$/);
-                
+
                 let finalContent;
                 if (numberedHeaderMatch) {
                     finalContent = settings.preserveNumbering ?
@@ -512,14 +567,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     finalContent = headerContent;
                 }
-                
+
                 result.push('  '.repeat(currentHeaderLevel) + finalContent);
                 return;
             }
 
-            // Handle list items
-            const bulletMatch = line.match(/^[-*+]\s+(.+)$/);
-            const numberMatch = line.match(/^(\d+\.\s+)(.+)$/);
+            // Handle list items with proper indentation
+            const bulletMatch = trimmedLine.match(/^[-*+]\s+(.+)$/);
+            const numberMatch = trimmedLine.match(/^(\d+\.\s+)(.+)$/);
             if (bulletMatch || numberMatch) {
                 let content;
                 if (numberMatch) {
@@ -529,60 +584,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     content = bulletMatch[1];
                 }
-                
-                const indent = lastHeaderIndent + 2;
-                result.push('  '.repeat(indent / 2) + content);
+
+                // Calculate proper indentation: header level + original markdown indentation
+                const listIndentLevel = Math.floor(originalIndent / 2); // Convert spaces to indent levels
+                const totalIndent = currentHeaderLevel + 1 + listIndentLevel; // Header + 1 level + list nesting
+                result.push('  '.repeat(totalIndent) + content);
             }
         });
 
         return result.join('\n');
     }
 
-    // Handle paste events
-    input.addEventListener('paste', (e) => {
-        const pastedText = e.clipboardData.getData('text');
-        
-        if (detectMarkdown(pastedText)) {
-            e.preventDefault();
-            
-            const start = input.selectionStart;
-            const end = input.selectionEnd;
-            const currentValue = input.value;
-            
-            const convertedText = convertMarkdownToTree(pastedText);
-            
-            input.value = currentValue.substring(0, start) + 
-                         convertedText + 
-                         currentValue.substring(end);
-            
-            input.selectionStart = input.selectionEnd = start + convertedText.length;
-            generateTree();
-        }
-    });
+    // Paste events now handled naturally - markdown will be converted for display only
 
-    // Handle Enter key for live markdown conversion
-    input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            const lines = input.value.split('\n');
-            const currentLine = lines[lines.length - 1].trim();
-            
-            if (detectMarkdown(currentLine)) {
-                e.preventDefault();
-                
-                // Convert just the current line
-                const convertedLines = convertMarkdownToTree(currentLine);
-                
-                // Replace the current line and add a new line
-                lines[lines.length - 1] = convertedLines;
-                input.value = lines.join('\n') + '\n';
-                
-                // Move cursor to the new line
-                input.selectionStart = input.selectionEnd = input.value.length;
-                
-                generateTree();
-            }
-        }
-    });
+    // Enter key now works naturally - no automatic conversion of input
 
     // Generate tree on initial load if there's content
     if (input.value) {
@@ -604,10 +619,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const beforeReplace = result;
                 result = result.replace(regex, replaceText);
 
-                // Debug logging (remove in production)
-                if (beforeReplace !== result) {
-                    console.log(`Rule ${index + 1}: "${findText}" → "${replaceText}" | "${beforeReplace}" → "${result}"`);
-                }
+                // Optional: Debug logging for development
+                // if (beforeReplace !== result) {
+                //     console.log(`Rule ${index + 1}: "${findText}" → "${replaceText}" | "${beforeReplace}" → "${result}"`);
+                // }
             }
         });
         return result;
@@ -668,12 +683,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function saveFindReplaceRules() {
-        console.log('Saving rules:', settings.findReplaceRules);
         localStorage.setItem('findReplaceRules', JSON.stringify(settings.findReplaceRules));
     }
 
     function renderFindReplaceRules() {
-        console.log('Rendering rules:', settings.findReplaceRules);
         findReplaceRulesContainer.innerHTML = '';
 
         settings.findReplaceRules.forEach((rule, index) => {
