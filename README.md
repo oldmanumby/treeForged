@@ -58,12 +58,16 @@ Root/           # Main project folder
 
 ## Format Settings
 
-**Replace Spaces:** Choose how to handle spaces in file and folder names.
+**Find & Replace:** Advanced text replacement system with preset options and custom rules.
 
-- **None:** Keep spaces as is (e.g., "my file.txt").
-- **Underscore:** Replace spaces with the underscore `_` (e.g., "my_file.txt").
-- **Dash:** Replace spaces with the dash `-` (e.g., "my-file.txt").
-- **Remove:** Remove all white spaces (e.g., "myfile.txt").
+- **Custom Rules:** Add unlimited find-and-replace rules that apply to all file and folder names
+- **Preset Buttons:** Quick-access buttons for common replacements:
+  - **Spaces:** Convert to underscore, dash, plus, or remove entirely
+  - **Underscores:** Convert to dash, plus, space, or remove
+  - **Dashes:** Convert to underscore, plus, space, or remove
+  - **Pluses:** Convert to underscore, dash, space, or remove
+- **Rule Management:** Add, edit, and remove rules individually or clear all at once
+- **Real-time Preview:** See changes applied instantly in the tree diagram
 
 **Export Format:** Choose how files are exported:
 
@@ -71,6 +75,12 @@ Root/           # Main project folder
 - **HTML:** Export all files as web `.html` files.
 - **Markdown:** Export all files as markdown `.md` files.
 - **Keep Original:** Preserve existing extensions; else `.txt` without extensions.
+
+**Export Options:** Control what gets included in the exported archive:
+
+- **Include Comments:** Export comment files alongside the directory structure
+- **Include Original Input:** Add a file containing your original input text
+- **Include Converted Output:** Add a file containing the generated tree diagram
 
 ## Markdown Features
 
@@ -82,20 +92,56 @@ Root/           # Main project folder
 - Markdown is converted as typed when `Enter` is pressed.
 - Proper indentation is maintained based on header pathways.
 
+## Find & Replace System
+
+The advanced Find & Replace system allows you to transform file and folder names with powerful text replacement rules:
+
+### Custom Rules
+- **Add Unlimited Rules:** Create as many find-and-replace rules as needed
+- **Real-time Application:** Changes are applied instantly to the tree diagram
+- **Export Integration:** All rules are applied to filenames during export
+- **Rule Management:** Edit existing rules or remove them individually
+
+### Preset Options
+Quick-access buttons for common text transformations:
+
+- **Space Handling:** Convert spaces to underscores, dashes, plus signs, or remove them entirely
+- **Underscore Conversion:** Transform underscores to dashes, plus signs, spaces, or remove them
+- **Dash Transformation:** Change dashes to underscores, plus signs, spaces, or remove them
+- **Plus Sign Handling:** Convert plus signs to underscores, dashes, spaces, or remove them
+
+### Usage Examples
+```
+Original: "My Project Files/Source Code/main file.js"
+Rule: " " → "_"
+Result: "My_Project_Files/Source_Code/main_file.js"
+
+Original: "project-name/sub-folder/test-file.txt"
+Rule: "-" → "_"
+Result: "project_name/sub_folder/test_file.txt"
+```
+
 ## Export Features
 
-- Files are exported in a `.zip` archive.
-- Comments are saved as separate `..._comments.txt` files.
-- The folder structure is preserved exactly as shown.
-- File content is generated based on file type:
-  - `.html` files include basic HTML structure
-  - `.md` files include a title header
-  - `.txt` files are created empty
+- **ZIP Archive:** Files are exported in a convenient `.zip` archive for easy download and extraction
+- **Comment Preservation:** Comments are saved as separate `..._comments.txt` files within their respective folders
+- **Structure Integrity:** The folder structure is preserved exactly as shown in the tree diagram
+- **Smart File Content:** File content is generated based on file type:
+  - `.html` files include basic HTML structure with proper DOCTYPE and meta tags
+  - `.md` files include a title header based on the filename
+  - `.txt` files are created empty and ready for content
+- **Optional Inclusions:** Choose to include additional files in your export:
+  - Original input text as `_original_input.txt`
+  - Generated tree diagram as `_converted_output.txt`
+- **Find & Replace Applied:** All custom find-and-replace rules are applied to exported filenames and folder names
 
 ## Tips
 
-- Use the `Copy to Clipboard` button to share your diagram quickly.
-- All settings are saved automatically between sessions.
-- Theme settings are `ON` by default for better visualization.
-- Display settings are `OFF` by default for cleaner output.
-- You can also run this from your desktop; download the latest release and open the `index.html` in any browser.
+- **Quick Sharing:** Use the `Copy to Clipboard` button to share your diagram quickly.
+- **Persistent Settings:** All settings are saved automatically between sessions.
+- **Default Configuration:** Theme settings are `ON` by default for better visualization; Display settings are `OFF` by default for cleaner output.
+- **Offline Usage:** Download the latest release and open `index.html` in any browser for desktop use.
+- **Find & Replace Efficiency:** Use preset buttons for common transformations, then add custom rules for specific needs.
+- **Export Optimization:** Enable "Include Original Input" and "Include Converted Output" for complete project documentation.
+- **Markdown Workflow:** Paste markdown outlines directly - they'll be converted automatically to tree format.
+- **Comment Organization:** Comments are automatically aligned and exported as separate files for easy reference.
