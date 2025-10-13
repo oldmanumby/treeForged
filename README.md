@@ -2,7 +2,7 @@
 
 # treePhorge
 
-An ASCII tree diagram and structure generator. Designed and tested for AI readability. 
+A Markdown/ASCII tree diagram and structure generator. Designed and tested for AI readability. All contained in a simple HTML file for easy local runs
 
 ## Input Methods
 
