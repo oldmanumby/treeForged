@@ -146,11 +146,13 @@ Result: "project_name/sub_folder/test_file.txt"
 - **Markdown Workflow:** Paste markdown outlines directly - they'll be converted automatically to tree format.
 - **Comment Organization:** Comments are automatically aligned and exported as separate files for easy reference.
 
+
+
 ---
 
 **License**
 
-issuePhorge is licensed under the GNU General Public License v3.0 (GPL-3.0). This means you can freely use, modify, and distribute this software, provided that:
+Licensed under the GNU General Public License v3.0 (GPL-3.0). This means you can freely use, modify, and distribute this software, provided that:
 
 - You disclose the source code of your modifications
 - You license your modifications under the same GPL-3.0 license
