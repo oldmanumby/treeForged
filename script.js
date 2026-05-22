@@ -1,3 +1,17 @@
+/*
+treePhorge
+A Markdown/ASCII tree diagram and structure generator. Designed and tested for AI readability.
+Website: https://code.oldmanumby.com
+
+author = "B.A. Umberger (Old Man Umby)"
+copyright = "Copyright 2026, B.A. Umberger"
+credits = ["B.A. Umberger"]
+license = "GPL-3.0"
+version = "1.0.0"
+maintainer = "B.A. Umberger"
+status = "Production"
+*/
+
 document.addEventListener('DOMContentLoaded', () => {
     const input = document.getElementById('input');
     const output = document.getElementById('output');
@@ -63,17 +77,17 @@ document.addEventListener('DOMContentLoaded', () => {
     function processLines(lines, settings) {
         let result = '';
         const indentSize = 2;
-        
+
         // First pass: find the maximum length of the tree structure (excluding comments)
         let maxLength = 0;
         const processedLines = [];
         const normalizedLines = normalizeIndentation(lines);
-        
+
         normalizedLines.forEach((line, index) => {
             const level = (line.match(/^\s*/)[0].length) / 2;
             let [name, comment] = line.trim().split('#').map(s => s.trim());
             const isFolderItem = isFolder(normalizedLines, index);
-            
+
             // Transform name based on settings
             let displayName = name;
             if (!settings.preserveNumbering) {
@@ -85,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (settings.useUpperCase) {
                 displayName = displayName.toUpperCase();
             }
-            
+
             // Calculate prefix length
             const prefixLength = 4 * level; // Each level adds 4 characters (│   or    )
             const iconLength = isFolderItem ?
@@ -94,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const nameLength = iconLength + displayName.length + (isFolderItem && !comment && settings.showFolderSlash ? 1 : 0);
             const totalLength = prefixLength + nameLength;
             maxLength = Math.max(maxLength, totalLength);
-            
+
             processedLines.push({
                 level,
                 name,
@@ -103,35 +117,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 isFolder: isFolderItem
             });
         });
-        
+
         // Add padding for comments
         const commentPadding = 4;
-        
+
         // Find root items to help determine tree boundaries
         const rootIndices = processedLines
             .map((item, index) => item.level === 1 ? index : -1)
             .filter(index => index !== -1);
-        
+
         // Second pass: generate the tree with aligned comments
         processedLines.forEach((item, index) => {
             const { level, displayName, comment, isFolder } = item;
-            
+
             // If it's a root level item (level 1) and not the first one
             if (level === 1 && index > 0 && !settings.connectedRoots) {
                 // Don't add extra newline
             }
-            
+
             let prefix = '';
-            
+
             // Track parent levels
             let parentLevels = new Set();
             let currentLevel = level;
             let currentIndex = index;
-            
+
             // Find the current root's boundary
             let currentRootIndex = rootIndices.find(rootIndex => rootIndex <= index);
             let nextRootIndex = rootIndices.find(rootIndex => rootIndex > index) ?? processedLines.length;
-            
+
             while (currentLevel > 1) {
                 for (let i = currentIndex - 1; i >= 0; i--) {
                     if (!processedLines[i]) continue;
@@ -143,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             }
-            
+
             // If it's a root level item
             if (level === 1) {
                 prefix = '';
@@ -152,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (i === level) {
                         const nextSibling = findNextAtLevel(normalizedLines, index, level);
                         // Only show sibling connector if it's before the next root
-                        const showSibling = nextSibling !== -1 && 
+                        const showSibling = nextSibling !== -1 &&
                             (!settings.connectedRoots ? nextSibling < nextRootIndex : true);
                         prefix += showSibling ? '├── ' : '└── ';
                     } else {
@@ -160,38 +174,38 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (parentLevels.has(i)) {
                             const nextAtLevel = findNextAtLevel(normalizedLines, index, i);
                             // Only show vertical line if it's before the next root
-                            showLine = nextAtLevel !== -1 && 
+                            showLine = nextAtLevel !== -1 &&
                                 (!settings.connectedRoots ? nextAtLevel < nextRootIndex : true);
                         }
                         prefix += showLine ? '│   ' : '    ';
                     }
                 }
             }
-            
+
             // Build the line with aligned comments
             let line = prefix;
-            
+
             // Add appropriate icon
             if (isFolder && settings.showFolderIcons) {
                 line += ICONS.folder;
             } else if (!isFolder && settings.showFileIcons) {
                 line += ICONS.file;
             }
-            
+
             line += displayName;
-            
+
             if (comment) {
-                const padding = maxLength - (prefix.length + displayName.length + 
+                const padding = maxLength - (prefix.length + displayName.length +
                     (isFolder && settings.showFolderIcons ? ICONS.folder.length : 0) +
                     (!isFolder && settings.showFileIcons ? ICONS.file.length : 0)) + commentPadding;
                 line += ' '.repeat(padding) + '# ' + comment;
             } else if (isFolder && settings.showFolderSlash) {
                 line += '/';
             }
-            
+
             result += line + '\n';
         });
-        
+
         return result;
     }
 
@@ -211,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Event Listeners
     input.addEventListener('input', generateTree);
     copyBtn.addEventListener('click', copyToClipboard);
-    
+
     darkModeToggle.addEventListener('change', (e) => {
         settings.darkMode = e.target.checked;
         if (e.target.checked) {
@@ -264,7 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (radio.value === settings.fileFormat) {
             radio.checked = true;
         }
-        
+
         radio.addEventListener('change', (e) => {
             settings.fileFormat = e.target.value;
             localStorage.setItem('fileFormat', e.target.value);
@@ -316,13 +330,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const indentSize = 2;
         const result = [];
         const levelMap = new Map();
-        
+
         lines.forEach((line, index) => {
             if (!line.trim()) return;
-            
+
             const originalLevel = (line.match(/^\s*/)[0].length) / 2;
             let normalizedLevel;
-            
+
             if (originalLevel === 0) {
                 normalizedLevel = 1;
             } else {
@@ -335,7 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         break;
                     }
                 }
-                
+
                 if (parentLevel === -1) {
                     normalizedLevel = 1;
                 } else {
@@ -343,12 +357,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     normalizedLevel = normalizedParentLevel + 1;
                 }
             }
-            
+
             levelMap.set(originalLevel, normalizedLevel);
             const spaces = ' '.repeat(normalizedLevel * indentSize);
             result.push(spaces + line.trim());
         });
-        
+
         return result;
     }
 
@@ -365,11 +379,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const lines = normalizeIndentation(inputText.split('\n'));
         const stack = [{ path: '', folder: zip }];
-        
+
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i];
             if (!line.trim()) continue;
-            
+
             const level = (line.match(/^\s*/)[0].length) / 2;
             let [name, comment] = line.trim().split('#').map(s => s.trim());
 
@@ -424,11 +438,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     // No extension - add the selected format
                     fileName = `${name}.${selectedFormat}`;
                 }
-                
+
                 // Create empty file with appropriate content based on file type
                 let content = '';
                 const ext = fileName.split('.').pop().toLowerCase();
-                
+
                 switch (ext) {
                     case 'html':
                         content = '<!DOCTYPE html>\n<html>\n<head>\n    <title>' + name + '</title>\n</head>\n<body>\n\n</body>\n</html>';
@@ -444,7 +458,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Use the parent folder to create the file
                 const parentFolder = stack[stack.length - 1].folder;
                 parentFolder.file(fileName, content, { binary: false });
-                
+
                 // If file has a comment and comments are enabled, create a comment file next to it
                 if (comment && settings.includeComments) {
                     // Get the name without extension for the comment file
@@ -466,7 +480,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            const content = await zip.generateAsync({ 
+            const content = await zip.generateAsync({
                 type: 'blob',
                 compression: 'DEFLATE',
                 compressionOptions: {

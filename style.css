@@ -1,3 +1,17 @@
+/*
+treePhorge
+A Markdown/ASCII tree diagram and structure generator. Designed and tested for AI readability.
+Website: https://code.oldmanumby.com
+
+author = "B.A. Umberger (Old Man Umby)"
+copyright = "Copyright 2026, B.A. Umberger"
+credits = ["B.A. Umberger"]
+license = "GPL-3.0"
+version = "1.0.0"
+maintainer = "B.A. Umberger"
+status = "Production"
+*/
+
 /* CSS Variables */
 :root {
     --bg-primary: #ffffff;
@@ -75,7 +89,8 @@ html.dark-mode .subtitle {
     color: #aaa;
 }
 
-h3, h4 {
+h3,
+h4 {
     color: #333333;
     transition: color 0.3s ease;
     margin: 0 0 1rem 0;
@@ -131,7 +146,7 @@ button {
 button:hover {
     background-color: #1976D2;
     transform: translateY(-1px);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 #output {
@@ -263,12 +278,12 @@ html.dark-mode .format-radio-group label:hover {
     cursor: pointer;
 }
 
-.format-radio-group input[type="radio"]:checked + span {
+.format-radio-group input[type="radio"]:checked+span {
     font-weight: 500;
     color: #2196F3;
 }
 
-html.dark-mode .format-radio-group input[type="radio"]:checked + span {
+html.dark-mode .format-radio-group input[type="radio"]:checked+span {
     color: #64B5F6;
 }
 
@@ -285,12 +300,13 @@ html.dark-mode .format-radio-group input[type="radio"]:checked + span {
     gap: 0.5rem;
 }
 
-.find-replace-controls > div:first-child {
+.find-replace-controls>div:first-child {
     display: flex;
     gap: 0.5rem;
 }
 
-.add-rule-btn, .clear-rules-btn {
+.add-rule-btn,
+.clear-rules-btn {
     padding: 0.5rem 1rem;
     font-size: 0.9rem;
     border-radius: 4px;
@@ -301,7 +317,8 @@ html.dark-mode .format-radio-group input[type="radio"]:checked + span {
     transition: all 0.2s ease;
 }
 
-.add-rule-btn:hover, .clear-rules-btn:hover {
+.add-rule-btn:hover,
+.clear-rules-btn:hover {
     background-color: #e9ecef;
     transform: translateY(-1px);
 }
@@ -386,7 +403,8 @@ html.dark-mode .preset-btn:hover {
     background-color: #f8f9fa;
     border: 1px solid #ddd;
     border-radius: 4px;
-    overflow: hidden; /* Prevent content from overflowing */
+    overflow: hidden;
+    /* Prevent content from overflowing */
 }
 
 html.dark-mode .find-replace-rule {
@@ -396,8 +414,10 @@ html.dark-mode .find-replace-rule {
 
 .find-replace-rule input {
     flex: 1;
-    min-width: 0; /* Allow inputs to shrink below their content width */
-    max-width: 120px; /* Limit maximum width */
+    min-width: 0;
+    /* Allow inputs to shrink below their content width */
+    max-width: 120px;
+    /* Limit maximum width */
     padding: 0.3rem;
     border: 1px solid #ccc;
     border-radius: 3px;
@@ -492,7 +512,7 @@ html.dark-mode .radio-group label {
 .gitea-button:hover {
     background-color: #444444;
     transform: translateY(-1px);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .gitea-button svg {
@@ -554,15 +574,15 @@ htmlhtml.dark-mode .slider {
     border-radius: 50%;
 }
 
-input:checked + .slider {
+input:checked+.slider {
     background-color: #2196F3;
 }
 
-input:focus + .slider {
+input:focus+.slider {
     box-shadow: 0 0 1px #2196F3;
 }
 
-input:checked + .slider:before {
+input:checked+.slider:before {
     transform: translateX(26px);
 }
 
@@ -595,7 +615,8 @@ input:checked + .slider:before {
     line-height: 1.5;
 }
 
-.help-content ul, .help-content ol {
+.help-content ul,
+.help-content ol {
     margin: 0.5rem 0;
     padding-left: 1.5rem;
 }
