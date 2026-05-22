@@ -8,7 +8,7 @@ A Markdown/ASCII tree diagram and structure generator. Designed and tested for A
 
 treePhorge is a versatile, browser-based tool that instantly converts your plain text or Markdown outlines into clean, well-structured ASCII tree diagrams. Whether you're planning a new software project, documenting an existing codebase for AI readability, or just organizing your thoughts, treePhorge handles the formatting automatically. It runs entirely in your browser with no installation required, ensuring your project structures stay private and secure.
 
-![Screenshot](screenshot.png)
+![Screenshot1](screenshot1.png)
 
 ## Features
 
@@ -17,6 +17,8 @@ treePhorge is a versatile, browser-based tool that instantly converts your plain
 - **Find & Replace System**: Transform file and folder names on the fly with custom rules and quick-access presets (e.g., swapping spaces for underscores).
 - **Robust Exporting**: Download your complete generated structure as a `.zip` archive containing your actual folders and files in formats like `.txt`, `.html`, or `.md`.
 - **Customizable UI & Output**: Toggle dark mode, file/folder icons, trailing slashes, root connections, and capitalization to suit your visual preferences.
+
+![Screenshot2](screenshot2.png)
 
 ## Requirements
 
