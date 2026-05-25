@@ -1,12 +1,12 @@
-![Apps_rePhorged](Apps_rePhorged.png)
+![Apps-reForged-Logo](Apps-reForged.png)
 
-# treePhorge
+# treeForged
 
 A Markdown/ASCII tree diagram and structure generator. Designed and tested for AI readability. All contained in a simple HTML file for easy local runs.
 
 ## Overview
 
-treePhorge is a versatile, browser-based tool that instantly converts your plain text or Markdown outlines into clean, well-structured ASCII tree diagrams. Whether you're planning a new software project, documenting an existing codebase for AI readability, or just organizing your thoughts, treePhorge handles the formatting automatically. It runs entirely in your browser with no installation required, ensuring your project structures stay private and secure.
+treeForged is a versatile, browser-based tool that instantly converts your plain text or Markdown outlines into clean, well-structured ASCII tree diagrams. Whether you're planning a new software project, documenting an existing codebase for AI readability, or just organizing your thoughts, treeForged handles the formatting automatically. It runs entirely in your browser with no installation required, ensuring your project structures stay private and secure.
 
 ![Screenshot1](screenshot1.png)
 
@@ -33,7 +33,7 @@ treePhorge is a versatile, browser-based tool that instantly converts your plain
 
 ## Configuration
 
-When you first run treePhorge, you can configure the following settings directly in the interface. All settings are saved to your browser's Local Storage for future use:
+When you first run treeForged, you can configure the following settings directly in the interface. All settings are saved to your browser's Local Storage for future use:
 
 1. **Theme Settings**: Toggle Dark Mode, preserve ordering, show trailing folder slashes, and connect roots.
 2. **Display Settings**: Toggle folder icons, file icons, and force all-caps text output.
