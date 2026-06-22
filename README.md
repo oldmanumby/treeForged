@@ -6,7 +6,7 @@ A Markdown/ASCII tree diagram and structure generator. Designed and tested for A
 
 ## Overview
 
-treeForged is a versatile, browser-based tool that instantly converts your plain text or Markdown outlines into clean, well-structured ASCII tree diagrams. Whether you're planning a new software project, documenting an existing codebase for AI readability, or just organizing your thoughts, treeForged handles the formatting automatically. It runs entirely in your browser with no installation required, ensuring your project structures stay private and secure.
+treeForged is a versatile, live browser-based tool that instantly converts your plain text or Markdown outlines into clean, well-structured ASCII tree diagrams. Whether you're planning a new software project, documenting an existing codebase for AI readability, or just organizing your thoughts, treeForged handles the formatting automatically. It runs entirely in your browser with no installation required, ensuring your project structures stay private and secure.
 
 ![Screenshot1](screenshot1.png)
 
